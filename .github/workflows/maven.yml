@@ -4,9 +4,11 @@
 name: Publish package to the Github Packages
 
 on:
-  release:
-    types: [created]
-
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version  (ie 5.5.0)'
+        required: true
 jobs:
   build:
 
@@ -21,15 +23,22 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-    - if: github.event.release
-      name: Update version in pom.xml (Release only)
-      run: mvn -B versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
+    - name: Update version in pom.xml (Release only)
+      run: mvn -B versions:set -DnewVersion=${{ github.event.inputs.version }} -DgenerateBackupPoms=false
+    - name: Create Release Branch
+      run: |
+        git checkout -b release/v${{ github.event.inputs.version }}
+        git config user.name github-actions
+        git config user.email
+        git add */pom.xml
+        git commit -m "Release ${{ github.event.inputs.version }}"
+        git push
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
-      env:
-       GITHUB_TOKEN: ${{ github.token }}
+#    - name: Publish to GitHub Packages Apache Maven
+#      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+#      env:
+#       GITHUB_TOKEN: ${{ github.token }}
     - run: mkdir staging
     - run: cp status-api/target/*.jar staging
     - run: cp spring-status/target/*.jar staging
