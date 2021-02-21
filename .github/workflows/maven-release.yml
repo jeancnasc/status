@@ -38,10 +38,11 @@ jobs:
 #      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
 #      env:
 #       GITHUB_TOKEN: ${{ github.token }}
-    - run: mkdir staging
-    - run: cp status-api/target/*.jar staging
-    - run: cp spring-status/target/*.jar staging
+#    - run: mkdir staging
+#    - run: cp status-api/target/*.jar staging
+#    - run: cp spring-status/target/*.jar staging
     - uses: actions/upload-artifact@v2
       with:
-       name: Package
-       path: staging
+       path: |
+         status-api/target/*.jar
+         spring-status/target/*.jar
