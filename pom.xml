@@ -5,7 +5,7 @@
     <groupId>br.com.jeancnasc.testando</groupId>
     <artifactId>status</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0beta1</version>
     <name>status</name>
     <url>http://maven.apache.org</url>
 
